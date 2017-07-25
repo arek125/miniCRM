@@ -10,7 +10,7 @@ import {BreadcrumbService} from 'ng2-breadcrumb/ng2-breadcrumb';
 })
 export class AppComponent {
 
-  constructor(private auth: AuthService, private router: Router, private breadcrumbService: BreadcrumbService) { }
+  constructor(public auth: AuthService, private router: Router, private breadcrumbService: BreadcrumbService) { }
   ngOnInit(){
   	if(this.auth.loggedIn()){
   		this.auth.getUserInfo(localStorage.getItem('id_user')||sessionStorage.getItem('id_user')).subscribe(user => {

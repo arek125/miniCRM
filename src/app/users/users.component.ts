@@ -16,7 +16,7 @@ export class UsersComponent implements OnInit {
   searchForm: FormGroup;
   //mode: String = "none";
   users;
-  constructor(private userService: UserService, private auth: AuthService, private router: Router) { 
+  constructor(private userService: UserService, public auth: AuthService, private router: Router) { 
     this.searchForm = new FormGroup({
       'query': new FormControl()
     })
