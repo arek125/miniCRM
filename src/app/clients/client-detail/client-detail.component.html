@@ -1,0 +1,145 @@
+<div class="row top-menu">
+    <div class="col-xs-12 clearfix">
+        <a routerLink="/clients" class="top-menu-link"><i class="fa fa-angle-double-left"></i> Powrót do listy klientów</a>
+		<div [hidden]="newMode"><button class="btn btn-danger pull-right" (click)="deleteClient()">Usuń tego klienta</button></div>
+    </div>
+</div>
+
+<div class="alert alert-danger" [hidden]="!notFound">
+    <strong>Ups..</strong> Taki klient nie został znaleziony
+</div>
+
+<div class="row" [hidden]="notFound">
+    <div class="col-xs-12 col-lg-6">
+        <div class="flat-panel">
+            <div class="flat-panel-header">
+                <h3 [hidden]="client._id" class="flat-panel-heading">Dodaj nowego klienta</h3>
+                <h3 [hidden]="!client._id" class="flat-panel-heading">Dane klienta</h3>
+            </div>
+            <div class="flat-panel-body">
+
+                <form class="form-horizontal" name="clientForm" (ngSubmit)="onSubmit()" #clientForm="ngForm">
+                	<div style="height: 65px">
+	                    <div class="alert alert-success" [hidden]="!submitted">
+	                        <strong>Sukces!</strong> Dane klienta zostały zapisane!
+	                    </div>
+
+	                    <div class="alert alert-warning" [hidden]="clientForm.valid||!clientForm.touched">
+	                        <strong>Uwaga!</strong> Popraw błędy formularza!
+	                    </div>
+					</div>
+                    <div class="form-group">
+                        <label for="company_name" class="col-lg-2 col-sm-2 col-xs-12 control-label">Nazwa firmy</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <input type="text" id="company_name" class="form-control" required maxlength="100" [(ngModel)]="client.company_name" name="company_name" #company_name="ngModel">
+
+                            <i class="glyphicon glyphicon-asterisk"></i>
+							<div *ngIf="company_name.errors && (company_name.dirty || company_name.touched)" class="label label-danger">
+	                            <span [hidden]="!company_name.errors.required" >Nazwa firmy jest wymagana</span>
+	                            <span [hidden]="!company_name.errors.maxlength" >Nazwa firmy nie może być dłuższa niż 100 znaków</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_name" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Osoba kontaktowa</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <input type="text" id="contact_name" class="form-control" placeholder="Imię i nazwisko osoby kontaktowej" required maxlength="50" [(ngModel)]="client.contact.name"
+                            name="contact_name" #contact_name="ngModel">
+
+                            <i class="glyphicon glyphicon-asterisk"></i>
+							<div *ngIf="contact_name.errors && (contact_name.dirty || contact_name.touched)" class="label label-danger">
+	                            <span [hidden]="!contact_name.errors.required" >Musisz podać imię i nazwisko osoby kontaktowej</span>
+	                            <span [hidden]="!contact_name.errors.maxlength" >Imię i nazwisko nie może być dłuższe niż 50 znaków</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-phone" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Telefon</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <input type="text" id="contact-phone" class="form-control" placeholder="Telefon do osoby kontaktowej" required pattern="^[0-9]{2} [0-9]{3} [0-9]{2} [0-9]{2}$" [(ngModel)]="client.contact.phone" name="contact_phone" #contact_phone="ngModel">
+
+                            <i class="glyphicon glyphicon-asterisk"></i>
+							<div *ngIf="contact_phone.errors && (contact_phone.dirty || contact_phone.touched)" class="label label-danger">
+	                            <span [hidden]="!contact_phone.errors.required" >Musisz podać telefon kontaktowy</span>
+	                            <span [hidden]="!contact_phone.errors.pattern" >Podaj numer telefonu w formacie: XX XXX XX XX</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact-email" class="col-lg-2 col-sm-2 col-xs-12 control-label required">E-mail</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <input type="email" id="contact-email" class="form-control" placeholder="e-mail do osoby kontaktowej" required email [(ngModel)]="client.contact.email" name="contact_email" #contact_email="ngModel">
+
+                            <i class="glyphicon glyphicon-asterisk"></i>
+							<div *ngIf="contact_email.errors && (contact_email.dirty || contact_email.touched)" class="label label-danger">
+	                            <span [hidden]="!contact_email.errors.required" >Adres e-mail jest wymagany</span>
+	                            <span [hidden]="!contact_email.errors.email" >Podałeś niepoprawny adres e-mail</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="account_manager" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Opiekun klienta</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <select id="account_manager" class="form-control" required [(ngModel)]="client.account_manager_id._id" name="account_manager" #account_manager="ngModel">
+                                <option value="">Wybierz</option>
+                                <option *ngFor="let user of users" [ngValue]="user._id">{{user.name||user.login}}</option>
+                            </select>
+
+                            <i class="glyphicon glyphicon-asterisk"></i>
+							<div *ngIf="account_manager.errors && (account_manager.dirty || account_manager.touched)" class="label label-danger">
+	                            <span [hidden]="!account_manager.errors.required" >Musisz wybrać opiekuna klienta</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company_sector" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Branża</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <select id="company_sector" class="form-control" required [(ngModel)]="client.sector_id._id" name="company_sector" #company_sector="ngModel">
+                                <option value="">Wybierz</option>
+                                <option *ngFor="let sector of sectors" [ngValue]="sector._id">{{sector.name}}</option>
+                            </select>
+
+                            <i class="glyphicon glyphicon-asterisk"></i>
+							<div *ngIf="company_sector.errors && (company_sector.dirty || company_sector.touched)" class="label label-danger">
+	                            <span [hidden]="!company_sector.errors.required" >Musisz wybrać branżę</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Notatki</label>
+
+                        <div class="col-lg-10 col-sm-10 col-xs-12">
+                            <textarea id="notes" class="form-control" placeholder="Dodatkowe informacje o kliencie" maxlength="500" [(ngModel)]="client.notes"
+                            name="notes" #notes="ngModel"></textarea>
+
+							<div *ngIf="notes.errors && (notes.dirty || notes.touched)" class="label label-danger">
+	                            <span [hidden]="!notes.errors.maxlength" >Notatka nie może mieć więcej niż 500 znaków</span>
+	                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-10 col-sm-10 col-xs-12 col-lg-offset-2 col-sm-offset-2">
+                            <button type="submit" class="btn btn-primary" [disabled]="clientForm.invalid">Zapisz</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <app-timeline class="col-xs-12 col-lg-6" *ngIf="!newMode">
+    </app-timeline>
+</div>

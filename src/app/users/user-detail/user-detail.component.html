@@ -1,0 +1,90 @@
+<div class="flat-panel">
+  <div class="flat-panel-header">
+    <h3 *ngIf="mode=='edit'">Dane użytkownika
+      <button *ngIf="auth.userData.admin" class="label label-danger pull-right" title="Usuń usera" (click)="deleteUser()"><i class="glyphicon glyphicon-minus"></i></button>
+    </h3>
+    <h3 *ngIf="mode=='new'">Nowy użytkownik</h3>
+  </div>
+  <hr>
+  <div class="flat-panel-body">
+    <div style="height: 70px">
+      <div class="alert alert-success" [hidden]="!succes">
+          <strong>Sukces!</strong> <div> {{succes}}</div>
+      </div>
+      <div class="alert alert-danger" [hidden]="!error">
+          <strong>Błąd!</strong> <div> {{error}}</div>
+      </div>
+    </div>
+    <form class="form-horizontal"  name="userForm" (ngSubmit)="onSubmitUser(userForm)" #userForm="ngForm" *ngIf="mode == 'edit' || mode == 'new'">
+      <div class="form-group">
+          <label for="user_name" class="col-lg-2 col-sm-2 col-xs-12 control-label">Nazwa użytkownika</label>
+          <div class="col-lg-10 col-sm-10 col-xs-12">
+            <input type="text" id="user_name" class="form-control" maxlength="100" [(ngModel)]="user.name" name="user_name" #user_name="ngModel">
+
+            <div *ngIf="user_name.errors && (user_name.dirty || user_name.touched)" class="label label-danger">
+                <span [hidden]="!user_name.errors.maxlength" >Nazwa użytkownika nie może być dłuższa niż 100 znaków</span>
+            </div>
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="user_login" class="col-lg-2 col-sm-2 col-xs-12 control-label">Login</label>
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <input type="text" id="user_login" class="form-control" required maxlength="20" minlength="3" [disabled]="mode == 'edit'" [(ngModel)]="user.login" name="user_login" #user_login="ngModel">
+
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="user_login.errors && (user_login.dirty || user_login.touched)" class="label label-danger">
+              <span [hidden]="!user_login.errors.required" >Login jest wymagany</span>
+              <span [hidden]="!user_login.errors.maxlength" >Login nie może być dłuższy niż 20 znaków</span>
+              <span [hidden]="!user_login.errors.minlength" >Login nie może być krótszy niż 3 znaki</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="user-email" class="col-lg-2 col-sm-2 col-xs-12 control-label required">E-mail</label>
+
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <input type="email" id="user-email" class="form-control" placeholder="e-mail" required email [(ngModel)]="user.email" name="user_email" #user_email="ngModel">
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="user_email.errors && (user_email.dirty || user_email.touched)" class="label label-danger">
+              <span [hidden]="!user_email.errors.required" >Adres e-mail jest wymagany</span>
+              <span [hidden]="!user_email.errors.email" >Podałeś niepoprawny adres e-mail</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="user_admin" class="col-lg-2 col-sm-2 col-xs-12 control-label">Admin</label>
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <input type="checkbox" id="user_admin" class="form-control" [(ngModel)]="user.admin" name="user_admin" #user_admin="ngModel" [disabled]="!auth.userData.admin">
+        </div>
+      </div>
+      <div class="form-group" [hidden]="mode == 'edit'">
+        <label for="user_password" class="col-lg-2 col-sm-2 col-xs-12 control-label">Hasło</label>
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <input type="password"  class="form-control" name="user_password" required minlength="8" [disabled]="mode == 'edit'" [(ngModel)]="user.password"  #user_password="ngModel">
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="user_password.errors && (user_password.dirty || user_password.touched)" class="label label-danger">
+              <span [hidden]="!user_password.errors.required" >Hasło jest wymagane dla nowego usera</span>
+              <span [hidden]="!user_password.errors.minlength" >8 Znaków wymagane</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" [hidden]="mode == 'edit'">
+        <label for="user_password2" class="col-lg-2 col-sm-2 col-xs-12 control-label">Potwierdź hasło</label>
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <input type="password"  class="form-control" name="user_password2" required [equalTo]="user_password" [disabled]="mode == 'edit'" [(ngModel)]="passwordrepeat"  #user_password2="ngModel">
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="user_password2.errors && (user_password2.dirty || user_password2.touched)" class="label label-danger">
+              <span [hidden]="!user_password2.errors.required" >Powtórzenia hasła jest wymagane</span>
+              <span [hidden]="!user_password2.errors.equalTo" >Hasła nie pasują</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+          <div class="col-lg-10 col-sm-10 col-xs-12 col-lg-offset-2 col-sm-offset-2" [ngSwitch]="mode" *ngIf="auth.userData.admin||auth.userData._id==user._id">
+              <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid" *ngSwitchCase="'new'">Utwórz nowego użytkownika</button>
+              <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid" *ngSwitchCase="'edit'">Aktualizuj dane</button>
+          </div>
+      </div>
+    </form>
+  </div>
+</div>

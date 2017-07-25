@@ -1,0 +1,107 @@
+<div class="flat-panel">
+  <div class="flat-panel-header">
+    <h3 class="flat-panel-heading">Dodaj nowe wydarzenie na osi czasu</h3>
+  </div>
+  <div class="flat-panel-body">
+
+    <form class="form-horizontal" name="timelineForm" (ngSubmit)="onSubmitTimeline(timelineForm)" #timelineForm="ngForm">
+      <div style="height: 65px">
+        <div class="alert alert-success" [hidden]="!submittedTimeline">
+          <strong>Sukces!</strong> Nowe wydarzenie zostało dodane do osi czasu!
+        </div>
+
+        <div class="alert alert-warning" [hidden]="timelineForm.valid||!timelineForm.touched">
+          <strong>Uwaga!</strong> Popraw błędy formularza!
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="contact_user" class="col-lg-2 col-sm-2 col-xs-12 control-label">Kto się kontaktował</label>
+
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <select id="contact_user" class="form-control" required [(ngModel)]="timeline.user_id" name="contact_user" #contact_user="ngModel">
+                        <option value="">Wybierz</option>
+                        <option *ngFor="let user of users" [ngValue]="user._id">{{user.name}}</option>
+                    </select>
+
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="contact_user.errors && (contact_user.dirty || contact_user.touched)" class="label label-danger">
+            <span [hidden]="!contact_user.errors.required">Wybierz osobę, która się kontaktowała</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contact_type" class="col-lg-2 col-sm-2 col-xs-12 control-label">Typ kontaktu</label>
+
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <select id="contact_type" class="form-control" required [(ngModel)]="timeline.contact_type" name="contact_type" #contact_type="ngModel">
+                        <option value="">Wybierz</option>
+                        <option *ngFor="let type of type_keys()" [ngValue]="type">{{contact_types[type].name}}</option>
+                    </select>
+
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="contact_type.errors && (contact_type.dirty || contact_type.touched)" class="label label-danger">
+            <span [hidden]="!contact_type.errors.required">Musisz wybrać typ kontaktu</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contact_date" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Data kontaktu</label>
+
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <input type="datetime-local" id="contact_date" class="form-control" required [ngModel]="timeline.contact_date | date:'yyyy-MM-ddTHH:mm'"
+            (ngModelChange)="timeline.contact_date = $event" name="contact_date" #contact_date="ngModel">
+
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="contact_date.errors && (contact_date.dirty || contact_date.touched)" class="label label-danger">
+            <span [hidden]="!contact_date.errors.required">Data jest wymagana</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="event_notes" class="col-lg-2 col-sm-2 col-xs-12 control-label required">Notatki</label>
+
+        <div class="col-lg-10 col-sm-10 col-xs-12">
+          <textarea id="event_notes" class="form-control" placeholder="np. ustalenia, potrzeby, kryteria decyzyjne" required maxlength="500"
+            [(ngModel)]="timeline.event_notes" name="event_notes" #event_notes="ngModel"></textarea>
+
+          <i class="glyphicon glyphicon-asterisk"></i>
+          <div *ngIf="event_notes.errors && (event_notes.dirty || event_notes.touched)" class="label label-danger">
+            <span [hidden]="!event_notes.errors.required">Notatka jest wymagana</span>
+            <span [hidden]="!event_notes.errors.maxlength">Notatka nie może mieć więcej niż 500 znaków</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-lg-10 col-sm-10 col-xs-12 col-lg-offset-2 col-sm-offset-2">
+          <button type="submit" class="btn btn-primary" [disabled]="timelineForm.invalid">Dodaj wydarzenie</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<hr>
+
+<p class="emtpy-timeline" [hidden]="!notFoundTimelines">Jeszcze nikt nie kontaktował się z tym klientem</p>
+
+<ul class="timeline">
+  <li *ngFor="let timeline of timelines">
+    <i class="fa {{timeline.contact_type}} {{contact_types[timeline.contact_type].color}}"></i>
+    <span class="date">{{timeline.contact_date|date:'mediumDate'}}</span>
+
+    <div class="content">
+      <p>
+        <strong>{{timeline.user_id.name}}</strong> - {{contact_types[timeline.contact_type].name}} dnia {{timeline.contact_date|date:'fullDate'}}
+        {{timeline.contact_date|date:'shortTime'}}
+      </p>
+
+      <blockquote>
+        <p>{{timeline.event_notes}}</p>
+      </blockquote>
+    </div>
+  </li>
+</ul>

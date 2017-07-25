@@ -1,0 +1,91 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="flat-panel">
+
+            <div class="flat-panel-header">
+                <h4 class="flat-panel-heading">Wyszkiwanie i filtracja</h4>
+            </div>
+            <div class="flat-panel-body">
+                <div class="form-horizontal">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label for="filter-company-name" class="col-sm-3 col-xs-12 control-label">Wyszukaj</label>
+
+                                <div class="col-sm-9 col-xs-12">
+                                    <input id="filter-company-name" type="text" class="form-control" placeholder="Podaj nazwę firmy" #companyName (keyup)="filter(companyName.value,sector.value,menager.value)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label for="filter-sector" class="col-sm-3 col-xs-12 control-label required">Branża</label>
+
+                                <div class="col-sm-9 col-xs-12">
+                                    <select id="filter-sector" class="form-control" #sector (change)="filter(companyName.value,sector.value,menager.value)">
+                                        <option value=""></option>
+                                        <option *ngFor="let sector of sectors | unique" value="{{sector}}">{{sector}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label for="filter-manager" class="col-sm-3 col-xs-12 control-label required">Opiekun klienta</label>
+
+                                <div class="col-sm-9 col-xs-12">
+                                    <select id="filter-manager" class="form-control" #menager (change)="filter(companyName.value,sector.value,menager.value)" >
+                                        <option value=""></option>
+                                        <option *ngFor="let menager of menagers | unique" value="{{menager}}">{{menager}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="flat-panel">
+            <div class="flat-panel-header">
+                <h3 class="flat-panel-heading">
+                    Klienci
+
+                    <a routerLink="/clients/new" class="label label-success pull-right" title="Dodaj nowego klienta"><i class="glyphicon glyphicon-plus"></i></a>
+                </h3>
+            </div>
+            <div class="flat-panel-body">
+                <table class="no-border table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 70px;">Lp.</th>
+                            <th *ngFor="let column of clientsColumns" (click)="sortHeaderClick(column)">
+                                <span class="sort-btn">
+                                   {{column}}
+                                    <i [ngClass]="{ 'glyphicon': isSorting(column), 'glyphicon-chevron-up': isSortAsc(column), 'glyphicon-chevron-down': isSortDesc(column) }"></i>
+                                </span>
+                            </th>
+                            <th class="text-center">Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody class="no-border">
+                         <tr *ngFor="let client of clientsF; let i = index" [attr.data-index]="i" >
+                            <td class="text-center">{{i+1}}</td>
+                            <td>{{client.company_name}}</td>
+                            <td class="hidden-xs">{{client.sector_id.name}}</td>
+                            <td class="hidden-xs">{{client.contact.name}}</td>
+                            <td class="text-center"><a routerLink="/clients/{{client._id}}" class="label label-primary">Szczegóły</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
