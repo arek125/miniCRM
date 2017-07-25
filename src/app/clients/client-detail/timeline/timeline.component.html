@@ -20,7 +20,7 @@
         <div class="col-lg-10 col-sm-10 col-xs-12">
           <select id="contact_user" class="form-control" required [(ngModel)]="timeline.user_id" name="contact_user" #contact_user="ngModel">
                         <option value="">Wybierz</option>
-                        <option *ngFor="let user of users" [ngValue]="user._id">{{user.name}}</option>
+                        <option *ngFor="let user of users" [ngValue]="user._id">{{user.name||user.login}}</option>
                     </select>
 
           <i class="glyphicon glyphicon-asterisk"></i>
@@ -95,7 +95,7 @@
 
     <div class="content">
       <p>
-        <strong>{{timeline.user_id.name}}</strong> - {{contact_types[timeline.contact_type].name}} dnia {{timeline.contact_date|date:'fullDate'}}
+        <strong>{{timeline.user_id.name||timeline.user_id.login}}</strong> - {{contact_types[timeline.contact_type].name}} dnia {{timeline.contact_date|date:'fullDate'}}
         {{timeline.contact_date|date:'shortTime'}}
       </p>
 
