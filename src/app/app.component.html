@@ -6,10 +6,10 @@
                 <i class="fa fa-bars"></i>
             </div>
             <div class="sidebar-logo">
-                <a href="#">miniCRM</a>
+                <a href="/">miniCRM</a>
             </div>
             <nav class="sidebar-navigation">
-                <ul>
+                <ul *ngIf="auth.loggedIn()">
                     <li routerLinkActive="active">
                         <a routerLink="/myclients">
                             <i class="fa fa-user"></i>
@@ -32,6 +32,14 @@
                         <a routerLink="/users">
                             <i class="fa fa-cogs"></i>
                             <span>Użytkownicy systemu</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul *ngIf="!auth.loggedIn()">
+                    <li routerLinkActive="active">
+                        <a routerLink="/login">
+                            <i class="fa fa-user"></i>
+                            <span>Logowanie</span>
                         </a>
                     </li>
                 </ul>
